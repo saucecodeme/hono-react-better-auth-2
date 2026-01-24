@@ -1,6 +1,7 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { AlertCircleIcon, KeyRound, Mail, User } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import {
   Card,
   CardContent,
@@ -93,17 +94,20 @@ function RouteComponent() {
           await new Promise((resolve) => setTimeout(resolve, 1000))
           router.navigate({ to: '/todos' })
         })
+      // throw new Error('Signin failed')
+      toast.success('Signed in successfully')
     } catch (err) {
       setAuthError('An unexpected error occured')
       console.error('Signup failed', err)
+      toast.error('Signin failed')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="flex items-start justify-center min-h-dvh mt-10 pt-30">
-      <Card className="w-full max-w-sm bg-base-100 shadow-none">
+    <div className="flex items-start justify-center min-h-[calc(100vh-64px)] mt-10 pt-30">
+      <Card className="w-full max-w-sm shadow-none">
         <CardHeader className="px-8">
           <CardTitle>Welcome Back</CardTitle>
           <CardDescription>We Are Happy To See You Again</CardDescription>
@@ -173,10 +177,10 @@ function RouteComponent() {
               disabled={!isFormValid || loading}
               className={`h-12 w-full font-bold bg-neutral-content text-neutral rounded-full cursor-pointer`}
             >
-              {loading ? <Loading /> : 'Sign in'}
+              {loading ? <Loading>Signing in...</Loading> : 'Sign in'}
             </Button>
             {authError && (
-              <Alert variant="destructive" className="bg-base-100 border-0">
+              <Alert variant="destructive" className="border-0">
                 <AlertCircleIcon />
                 <AlertTitle>{authError}</AlertTitle>
               </Alert>

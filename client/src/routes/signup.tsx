@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { AlertCircleIcon, KeyRound, Mail, User } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -195,9 +196,12 @@ function RouteComponent() {
           await new Promise((resolve) => setTimeout(resolve, 1000))
           router.navigate({ to: '/todos' })
         })
+      // throw new Error('Signup failed')
+      toast.success('Account created successfully')
     } catch (err) {
       setAuthError('An unexpected error occured')
       console.error('Signup failed', err)
+      toast.error('Signup failed')
     } finally {
       setLoading(false)
     }
@@ -205,7 +209,7 @@ function RouteComponent() {
 
   return (
     <div className="flex items-start justify-center min-h-dvh mt-10 pt-30">
-      <Card className="w-full max-w-sm bg-base-100 shadow-none">
+      <Card className="w-full max-w-sm shadow-none">
         <CardHeader className="px-8">
           <CardTitle>Create an account</CardTitle>
           <CardDescription>We Are Happy To See You</CardDescription>
@@ -318,10 +322,14 @@ function RouteComponent() {
               disabled={!isFormValid || loading}
               className={`h-12 w-full font-bold bg-neutral-content text-neutral rounded-full cursor-pointer`}
             >
-              {loading ? <Loading /> : 'Create account'}
+              {loading ? (
+                <Loading>Creating account...</Loading>
+              ) : (
+                'Create account'
+              )}
             </Button>
             {authError && (
-              <Alert variant="destructive" className="bg-base-100 border-0">
+              <Alert variant="destructive" className="border-0">
                 <AlertCircleIcon />
                 <AlertTitle>{authError}</AlertTitle>
               </Alert>
