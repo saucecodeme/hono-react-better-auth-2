@@ -21,6 +21,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Averta';
+  src: url('./assets//fonts/averta-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
 body {
   @apply m-0;
   /* font-family:
@@ -40,32 +47,25 @@ code {
     source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-/*
-Red: #E65F5C
-Green: #B5D99C
-Cream: #F5F7DC
-Yellow: #FFFF82
-*/
-
 :root {
-  --background: oklch(0.2882 0.0221 277.51); /* dracula */
-  --foreground: oklch(0.9757 0.0095 119.58); /* dracula */
+  --background: oklch(1 0 0); /* dracula */
+  --foreground: oklch(0.145 0 0); /* dracula */
   --radius: 0.625rem;
-  --card: oklch(0.2158 0.0116 254.08);
-  --card-foreground: oklch(0.9735 0.0168 225.19);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.9001 0.0753 69.86);
-  --primary-foreground: oklch(0.2247 0.0403 217.61);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.9757 0.0095 119.58 / 50%);
-  --accent: oklch(0.4313 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.6806 0.2005 25.41); /* dracula */
+  --destructive: oklch(0.577 0.245 27.325); /* dracula */
   --border: oklch(0.922 0 0);
-  --input: oklch(0.3949 0.0342 275.9);
+  --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -98,6 +98,7 @@ Yellow: #FFFF82
 @layer base {
   :root {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
   }
 
   /* :root {
