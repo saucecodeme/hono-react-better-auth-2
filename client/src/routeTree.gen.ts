@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TodosRouteImport } from './routes/todos'
-import { Route as TestRouteImport } from './routes/test'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -19,11 +18,6 @@ import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-qu
 const TodosRoute = TodosRouteImport.update({
   id: '/todos',
   path: '/todos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestRoute = TestRouteImport.update({
-  id: '/test',
-  path: '/test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -51,7 +45,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/test': typeof TestRoute
   '/todos': typeof TodosRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
@@ -59,7 +52,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/test': typeof TestRoute
   '/todos': typeof TodosRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
@@ -68,27 +60,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/test': typeof TestRoute
   '/todos': typeof TodosRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/signin'
-    | '/signup'
-    | '/test'
-    | '/todos'
-    | '/demo/tanstack-query'
+  fullPaths: '/' | '/signin' | '/signup' | '/todos' | '/demo/tanstack-query'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signin' | '/signup' | '/test' | '/todos' | '/demo/tanstack-query'
+  to: '/' | '/signin' | '/signup' | '/todos' | '/demo/tanstack-query'
   id:
     | '__root__'
     | '/'
     | '/signin'
     | '/signup'
-    | '/test'
     | '/todos'
     | '/demo/tanstack-query'
   fileRoutesById: FileRoutesById
@@ -97,7 +81,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-  TestRoute: typeof TestRoute
   TodosRoute: typeof TodosRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
 }
@@ -109,13 +92,6 @@ declare module '@tanstack/react-router' {
       path: '/todos'
       fullPath: '/todos'
       preLoaderRoute: typeof TodosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -153,7 +129,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
-  TestRoute: TestRoute,
   TodosRoute: TodosRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
 }

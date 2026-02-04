@@ -219,14 +219,14 @@ function RouteComponent() {
             <Button
               variant="ghost"
               className={`h-8 flex-1 font-bold text-muted-foreground rounded-full text-sm flex items-center justify-center`}
-              aschild
+              asChild
             >
               <Link to="/signin">Sign in</Link>
             </Button>
 
             <Button
               className={`h-8 flex-1 font-bold text-neutral rounded-full text-sm flex items-center justify-center`}
-              aschild
+              asChild
             >
               <Link to="/signup">Sign up</Link>
             </Button>

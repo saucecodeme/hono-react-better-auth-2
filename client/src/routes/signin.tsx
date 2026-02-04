@@ -1,5 +1,5 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
-import { AlertCircleIcon, KeyRound, Mail, User } from 'lucide-react'
+import { AlertCircleIcon, KeyRound, Mail } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import {
@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { InputWithIcon } from '@/components/ui/inputwithicon'
-// import { WarningMessage } from '@/components/WarningMessage'
 import { Button } from '@/components/ui/button'
 import { WarningMessage } from '@/components/WarningMessage'
 import { authClient } from '@/lib/auth-client'
