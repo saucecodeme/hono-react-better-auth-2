@@ -1,13 +1,12 @@
 import { Link } from '@tanstack/react-router'
 
 import { useEffect, useState } from 'react'
-import { Home, ListTodo, LogIn, LogOut, Network, X } from 'lucide-react'
+import { Home, ListTodo, LogIn, LogOut } from 'lucide-react'
 import { toast } from 'sonner'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false)
   const { data: session, isPending } = authClient.useSession()
   const [isSignedIn, setIsSignedIn] = useState(false)
 
@@ -21,10 +20,6 @@ export default function Header() {
       console.error('Signout failed')
       toast.error('Signout failed')
     }
-  }
-
-  const handleToast = () => {
-    toast('Event has been created.')
   }
 
   useEffect(() => {

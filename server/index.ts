@@ -1,13 +1,14 @@
 import { Hono } from "hono";
-import { getTodos } from "./db/queries";
 import { auth } from "./lib/auth";
 import { todos } from "./routes/todos.routes";
+import { serveStatic } from "hono/bun";
 
-const app = new Hono().basePath("/api");
+const app = new Hono();
 
 const router = app
-  .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
-  .route("/todos", todos);
+  .use("/*", serveStatic({ root: "./client/dist" }))
+  .on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw))
+  .route("/api/todos", todos);
 
 export type AppType = typeof router;
 export default app;
