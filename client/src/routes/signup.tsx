@@ -182,7 +182,6 @@ function RouteComponent() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
     setAuthError('')
 
     try {
@@ -191,13 +190,20 @@ function RouteComponent() {
           email: signupData.email,
           password: signupData.password,
           name: signupData.username,
-        })
-        .then(async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000))
-          router.navigate({ to: '/todos' })
+        }, {
+          onRequest: () => {
+            setLoading(true)
+          },
+          onSuccess: () => {
+            toast.success('Account created successfully')
+            router.navigate({ to: '/todos' })
+          },
+          onError: (ctx) => {
+            toast.error(ctx.error.message)
+            setAuthError(ctx.error.message)
+          }
         })
       // throw new Error('Signup failed')
-      toast.success('Account created successfully')
     } catch (err) {
       setAuthError('An unexpected error occured')
       console.error('Signup failed', err)
@@ -337,7 +343,6 @@ function RouteComponent() {
             )}
           </form>
         </CardContent>
-        <CardFooter className="flex-col gap-3" />
       </Card>
     </div>
   )

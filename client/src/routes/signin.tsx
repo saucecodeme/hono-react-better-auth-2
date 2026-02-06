@@ -80,7 +80,6 @@ function RouteComponent() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
     setAuthError('')
 
     try {
@@ -88,13 +87,20 @@ function RouteComponent() {
         .email({
           email: signinData.email,
           password: signinData.password,
-        })
-        .then(async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000))
-          router.navigate({ to: '/todos' })
+        }, {
+          onRequest: () => {
+            setLoading(true)
+          },
+          onSuccess: () => {
+            toast.success('Signed in successfully')
+            router.navigate({ to: '/todos' })
+          },
+          onError: (ctx) => {
+            toast.error(ctx.error.message)
+            setAuthError(ctx.error.message)
+          }
         })
       // throw new Error('Signin failed')
-      toast.success('Signed in successfully')
     } catch (err) {
       setAuthError('An unexpected error occured')
       console.error('Signup failed', err)

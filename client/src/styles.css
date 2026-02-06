@@ -210,3 +210,28 @@ code {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+    .link-hover {
+        position: relative;
+    }
+
+    .link-hover::after {
+        content: '';
+        position: absolute;
+        inset-inline-start: 50%;
+        bottom: 5px;
+        height: 1px;
+        width: 70%;
+        transform-origin: center;
+        transform: translateX(-50%) scaleX(0);
+        transition: transform 0.3s ease-in-out;
+        background: var(--color-muted-foreground);
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .link-hover:hover::after
+     {
+        transform: translateX(-50%) scaleX(1);
+    }
+}
