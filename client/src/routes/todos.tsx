@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 
@@ -6,7 +7,7 @@ import { AlertCircleIcon } from 'lucide-react'
 
 // Hono RPC
 import { hc } from 'hono/client'
-import { useEffect } from 'react'
+import { motion } from 'motion/react'
 import type { AppType } from '../../../server/index.ts'
 
 // shadcn/ui
@@ -14,6 +15,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { authClient } from '@/lib/auth-client.ts'
+import { Button } from '@/components/ui/button.tsx'
+import { TodoComponent } from '@/components/todo.tsx'
+
+import { cn } from '@/lib/utils.ts'
+import { useCreateTodo } from '@/utils/tanstack-query/useMutation.ts'
 
 const client = hc<AppType>('/')
 
@@ -32,6 +38,11 @@ function RouteComponent() {
       return res.json()
     },
   })
+  const createTodoMutation = useCreateTodo()
+
+  const handleCreateNewTodo = async () => {
+    await createTodoMutation.mutateAsync({ title: 'New todo' })
+  }
 
   useEffect(() => {
     if (!session && !isPending) {
@@ -60,14 +71,23 @@ function RouteComponent() {
           </Alert>
         )}
 
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col items-center gap-0.5">
           {data &&
             data.map((todo) => (
-              <div key={todo.id} className="flex items-center gap-2">
-                <Checkbox />
-                <span>{todo.title}</span>
-              </div>
+              <TodoComponent key={todo.id} title={todo.title} />
             ))}
+
+          {data && data.length === 0 && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <span>No todos</span>
+            </div>
+          )}
+
+          <motion.div className={cn(data && data.length > 0 ? 'mt-4' : '')}>
+            <Button variant="linkAnimated" onClick={handleCreateNewTodo}>
+              Add new todo
+            </Button>
+          </motion.div>
         </div>
       </div>
     </div>

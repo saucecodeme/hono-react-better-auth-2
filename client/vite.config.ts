@@ -22,6 +22,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  // Add these performance optimizations
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@tanstack/react-router'],
+  },
   server: {
     proxy: {
       '/api': {
