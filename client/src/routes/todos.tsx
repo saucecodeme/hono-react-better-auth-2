@@ -18,7 +18,10 @@ import { Button } from '@/components/ui/button.tsx'
 import { TodoComponent } from '@/components/todo.tsx'
 
 import { cn } from '@/lib/utils.ts'
-import { useCreateTodo } from '@/utils/tanstack-query/useMutation.ts'
+import {
+  useCreateTodo,
+  useDeleteTodo,
+} from '@/utils/tanstack-query/useMutation.ts'
 
 const client = hc<AppType>('/')
 
@@ -37,14 +40,28 @@ function RouteComponent() {
       return res.json()
     },
   })
+  const [editingTodoId, setEditingTodoId] = useState<string | null>(null)
   const [isEditingMode, setIsEditingMode] = useState(false)
   const createTodoMutation = useCreateTodo()
+  const deleteTodoMutation = useDeleteTodo()
 
-  const handleEditStart = () => setIsEditingMode(true)
-  const handleEditEnd = () => setIsEditingMode(false)
+  const handleEditStart = (id: string) => {
+    setEditingTodoId(id)
+    setIsEditingMode(true)
+  }
+  const handleEditEnd = () => {
+    setEditingTodoId(null)
+    setIsEditingMode(false)
+  }
 
   const handleCreateNewTodo = async () => {
     await createTodoMutation.mutateAsync({ title: 'New todo' })
+  }
+
+  const handleDeleteTodo = async () => {
+    if (!editingTodoId) return
+    await deleteTodoMutation.mutateAsync({ id: editingTodoId })
+    handleEditEnd()
   }
 
   useEffect(() => {
@@ -84,6 +101,7 @@ function RouteComponent() {
                 completed={todo.completed}
                 onEditStart={handleEditStart}
                 onEditEnd={handleEditEnd}
+                handleDeleteTodo={handleDeleteTodo}
               />
             ))}
 
@@ -121,9 +139,14 @@ function RouteComponent() {
             },
           },
         }}
-        className="fixed bottom-10 px-2 py-1 rounded-2xl flex items-center justify-center gap-0 bg-input/30"
+        className="fixed bottom-10 px-2 py-1 rounded-2xl flex items-center justify-center gap-0 bg-[#151515]"
+        data-ignore-click-outside
       >
-        <Button variant="destructiveGhost" className="rounded-xl">
+        <Button
+          variant="destructiveGhost"
+          className="rounded-xl"
+          onClick={handleDeleteTodo}
+        >
           <Trash2 size={16} />
         </Button>
         <Button variant="ghost" className="rounded-xl">
