@@ -7,13 +7,15 @@ export interface TodoComponentProps {
   id: string
   title: string
   completed: boolean
+  onEditStart: () => void
+  onEditEnd: () => void
 }
 
 export const TodoComponent = React.forwardRef<
   HTMLDivElement,
   TodoComponentProps
 >((props, ref) => {
-  const { id, title, completed } = props
+  const { id, title, completed, onEditStart, onEditEnd } = props
   const [isEditing, setIsEditing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(title)
 
@@ -40,6 +42,7 @@ export const TodoComponent = React.forwardRef<
     ) {
       return // Don't enter edit mode
     }
+    onEditStart()
     setIsEditing(true)
   }
 
@@ -56,6 +59,7 @@ export const TodoComponent = React.forwardRef<
       })
     }
     setIsEditing(false)
+    onEditEnd()
   }
 
   const handleToggleComplete = async () => {
@@ -72,6 +76,7 @@ export const TodoComponent = React.forwardRef<
     } else if (event.key === 'Escape') {
       setEditedTitle(title)
       setIsEditing(false)
+      onEditEnd()
     }
   }
 
