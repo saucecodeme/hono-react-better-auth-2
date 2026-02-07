@@ -55,4 +55,8 @@ export const todos = new Hono<HonoEnv>()
       console.error("Error updating todo:", error);
       return c.json({ success: false, error: "Failed to update todo" }, 500);
     }
+  })
+  .delete("/:id", async (c) => {
+    const user = c.get("user");
+    // Implement deleteTodo mutation function
   });
