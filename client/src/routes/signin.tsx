@@ -1,4 +1,9 @@
-import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
+import {
+  Link,
+  createFileRoute,
+  redirect,
+  useRouter,
+} from '@tanstack/react-router'
 import { AlertCircleIcon, KeyRound, Mail } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
@@ -83,42 +88,53 @@ function RouteComponent() {
     setAuthError('')
 
     try {
-      await authClient.signIn
-        .email({
+      await authClient.signIn.email(
+        {
           email: signinData.email,
           password: signinData.password,
-        }, {
+        },
+        {
           onRequest: () => {
             setLoading(true)
           },
-          onSuccess: () => {
-            toast.success('Signed in successfully')
+          onSuccess: async () => {
+            // toast.success('Signed in successfully')
+            await new Promise((resolve) => setTimeout(resolve, 1000))
             router.navigate({ to: '/todos' })
+            // throw redirect({ to: '/todos' })
           },
           onError: (ctx) => {
             toast.error(ctx.error.message)
             setAuthError(ctx.error.message)
-          }
-        })
+          },
+        },
+      )
       // throw new Error('Signin failed')
     } catch (err) {
       setAuthError('An unexpected error occured')
-      console.error('Signup failed', err)
-      toast.error('Signin failed')
+      console.error('Signin failed', err)
+      // toast.error('Signin failed')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="flex items-start justify-center min-h-[calc(100vh-64px)] pt-30 bg-background">
-      <Card className="w-full max-w-sm shadow-none">
-        <CardHeader className="px-8">
-          <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>We Are Happy To See You Again</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="bt mb-8 p-1 rounded-full flex gap-1">
+    <div className="relative flex items-center justify-center min-h-[calc(100vh-80px)] px-[5%] bg-core-background">
+      <div className="min-h-[600px] w-120 bg-core-foreground rounded-2xl p-10 text-core-background"></div>
+      <div className="min-h-[calc(100vh-120px)] w-100 flex items-center pb-20">
+        <Card className="w-full h-fit max-w-md shadow-none bg-core-background">
+          <CardHeader className="w-full flex flex-col items-start gap-1 px-8">
+            <CardTitle className="font-recoleta font-bold text-3xl text-core-foreground">
+              Welcome Back
+            </CardTitle>
+            <CardDescription className="pl-0.5 font-normal">
+              Happy to see you again <br />
+              Sign in and pick up where you left off
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* <div className="bt mb-8 p-1 rounded-full flex gap-1">
             <Button
               className="h-8 flex-1 font-bold text-neutral rounded-full text-sm flex items-center justify-center"
               asChild
@@ -133,66 +149,77 @@ function RouteComponent() {
             >
               <Link to="/signup">Sign up</Link>
             </Button>
-          </div>
+          </div> */}
 
-          <form onChange={handleFormChange} onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-2 mb-4">
-              <div className="grid gap-1">
-                <InputWithIcon
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="off"
-                  placeholder="Enter your email"
-                  disabled={loading}
-                  required
-                  endIcon={Mail}
-                  className={`rounded-full h-12`}
-                />
-                <WarningMessage
-                  name="username"
-                  message={formErrors.email}
-                  className="px-4"
-                />
+            <form onChange={handleFormChange} onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-2 mb-4">
+                <div className="grid gap-1">
+                  <InputWithIcon
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="off"
+                    placeholder="Enter your email"
+                    disabled={loading}
+                    required
+                    endIcon={Mail}
+                    className={`rounded-xl h-12 shadow-none`}
+                  />
+                  <WarningMessage
+                    name="username"
+                    message={formErrors.email}
+                    className="px-4"
+                  />
+                </div>
+                <div className="grid gap-1">
+                  <InputWithIcon
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    pattern="[A-Za-z0-9@]+"
+                    minLength={8}
+                    maxLength={30}
+                    // value={signupData.password}
+                    disabled={loading}
+                    required
+                    endIcon={KeyRound}
+                    className={`rounded-xl h-12 shadow-none`}
+                  />
+                  <WarningMessage
+                    name="password"
+                    message={formErrors.password}
+                    className="px-4"
+                  />
+                </div>
               </div>
-              <div className="grid gap-1">
-                <InputWithIcon
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  pattern="[A-Za-z0-9@]+"
-                  minLength={8}
-                  maxLength={30}
-                  // value={signupData.password}
-                  disabled={loading}
-                  required
-                  endIcon={KeyRound}
-                  className={`rounded-full h-12`}
-                />
-                <WarningMessage
-                  name="password"
-                  message={formErrors.password}
-                  className="px-4"
-                />
-              </div>
+              <Button
+                type="submit"
+                variant="defaultCore"
+                disabled={!isFormValid || loading}
+                className={`h-12 w-full font-bold text-white rounded-xl cursor-pointer`}
+              >
+                {loading ? <Loading>Signing in...</Loading> : 'Sign in'}
+              </Button>
+              {authError && (
+                <Alert
+                  variant="destructive"
+                  className="border-0 bg-core-background"
+                >
+                  <AlertCircleIcon strokeWidth={2.5} />
+                  <AlertTitle className="font-semibold">{authError}</AlertTitle>
+                </Alert>
+              )}
+            </form>
+            <div className="w-full py-3 flex justify-center items-center gap-2 text-sm text-muted-foreground">
+              <span>Don't have an account?</span>
+              <Link to="/signup" className="text-core-foreground font-semibold">
+                Create an account
+              </Link>
             </div>
-            <Button
-              type="submit"
-              disabled={!isFormValid || loading}
-              className={`h-12 w-full font-bold text-neutral rounded-full cursor-pointer`}
-            >
-              {loading ? <Loading>Signing in...</Loading> : 'Sign in'}
-            </Button>
-            {authError && (
-              <Alert variant="destructive" className="border-0">
-                <AlertCircleIcon />
-                <AlertTitle>{authError}</AlertTitle>
-              </Alert>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

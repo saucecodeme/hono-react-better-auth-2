@@ -19,7 +19,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     <>
       <Header />
       <Toaster />
-      <Outlet />
+      <div className="">
+        <Outlet />
+      </div>
       <TanStackDevtools
         config={{
           position: 'bottom-right',

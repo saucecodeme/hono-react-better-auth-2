@@ -16,13 +16,13 @@ const InputWithIcon = React.forwardRef<HTMLInputElement, InputWithIconProps>(
       <div className="relative">
         {StartIcon && (
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-            <StartIcon size={16} className="text-muted-foreground" />
+            <StartIcon size={12} className="text-muted-foreground" />
           </div>
         )}
         <Input
           type={type}
           className={cn(
-            'flex h-10 w-full rounded-md py-2 px-4',
+            'flex h-10 w-full rounded-md py-2 px-4 text-core-foreground border-core-border/20 ring-0 focus-visible:ring-0',
             startIcon ? 'pl-10' : '',
             endIcon ? 'pr-10' : '',
             className,
@@ -31,7 +31,7 @@ const InputWithIcon = React.forwardRef<HTMLInputElement, InputWithIconProps>(
         />
         {EndIcon && (
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-            <EndIcon size={18} className="text-muted-foreground" />
+            <EndIcon size={12} className="text-muted-foreground" />
           </div>
         )}
       </div>
