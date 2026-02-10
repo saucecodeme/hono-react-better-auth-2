@@ -72,92 +72,95 @@ function RouteComponent() {
   }, [session, router, isPending])
 
   return (
-    <div className="relative z-10 flex items-start justify-center min-h-[calc(100vh-120px)] pt-30">
-      <div className="flex flex-col gap-4">
-        {isLoading && (
-          <div className="flex flex-col gap-2">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex items-center gap-2">
-                <Skeleton className="h-4 w-4 rounded-lg" />
-                <Skeleton className="h-5 w-40 rounded-lg" />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {isError && (
-          <Alert>
-            <AlertCircleIcon />
-            <AlertTitle>{error.message}</AlertTitle>
-          </Alert>
-        )}
-
-        <div className="flex flex-col items-center gap-0.5">
-          {data &&
-            data.map((todo) => (
-              <TodoComponent
-                key={todo.id}
-                id={todo.id}
-                title={todo.title}
-                completed={todo.completed}
-                onEditStart={handleEditStart}
-                onEditEnd={handleEditEnd}
-                handleDeleteTodo={handleDeleteTodo}
-              />
-            ))}
-
-          {data && data.length === 0 && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <span>No todos</span>
+    <div className="bt relative flex justify-start min-h-[calc(100vh-80px)] p-[5%] pt-10">
+      <div className="w-80 bg-core-card rounded-xl"></div>
+      <div className="relative w-100 flex items-start justify-center pt-10">
+        <div className="flex flex-col gap-4">
+          {isLoading && (
+            <div className="flex flex-col gap-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4 rounded-lg" />
+                  <Skeleton className="h-5 w-40 rounded-lg" />
+                </div>
+              ))}
             </div>
           )}
 
-          <motion.div className={cn(data && data.length > 0 ? 'mt-4' : '')}>
-            <Button
-              variant="linkAnimated"
-              onClick={handleCreateNewTodo}
-              className="font-semibold"
-            >
-              Add new todo
-            </Button>
-          </motion.div>
-        </div>
-      </div>
+          {isError && (
+            <Alert>
+              <AlertCircleIcon />
+              <AlertTitle>{error.message}</AlertTitle>
+            </Alert>
+          )}
 
-      <motion.div
-        initial="hidden"
-        animate={isEditingMode ? 'visible' : 'hidden'}
-        variants={{
-          hidden: {
-            y: 20,
-            opacity: 0,
-            scale: 0.9,
-          },
-          visible: {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            transition: {
-              type: 'spring',
-              stiffness: 300,
-              damping: 25,
+          <div className="flex flex-col items-center gap-0.5">
+            {data &&
+              data.map((todo) => (
+                <TodoComponent
+                  key={todo.id}
+                  id={todo.id}
+                  title={todo.title}
+                  completed={todo.completed}
+                  onEditStart={handleEditStart}
+                  onEditEnd={handleEditEnd}
+                  handleDeleteTodo={handleDeleteTodo}
+                />
+              ))}
+
+            {data && data.length === 0 && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span>No todos</span>
+              </div>
+            )}
+
+            <motion.div className={cn(data && data.length > 0 ? 'mt-4' : '')}>
+              <Button
+                variant="linkAnimated"
+                onClick={handleCreateNewTodo}
+                className="font-semibold"
+              >
+                Add new todo
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+
+        <motion.div
+          initial="hidden"
+          animate={isEditingMode ? 'visible' : 'hidden'}
+          variants={{
+            hidden: {
+              y: 20,
+              opacity: 0,
+              scale: 0.9,
             },
-          },
-        }}
-        className="fixed bottom-10 px-2 py-1 rounded-2xl flex items-center justify-center gap-0 bg-core-card"
-        data-ignore-click-outside
-      >
-        <Button
-          variant="destructiveGhost"
-          className="rounded-xl"
-          onClick={handleDeleteTodo}
+            visible: {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              transition: {
+                type: 'spring',
+                stiffness: 300,
+                damping: 25,
+              },
+            },
+          }}
+          className="fixed bottom-10 px-2 py-1 rounded-2xl flex items-center justify-center gap-0 bg-core-card"
+          data-ignore-click-outside
         >
-          <Trash2 size={16} />
-        </Button>
-        <Button variant="ghost" className="rounded-xl hover:bg-black/10">
-          <Ellipsis size={16} />
-        </Button>
-      </motion.div>
+          <Button
+            variant="destructiveGhost"
+            className="rounded-xl"
+            onClick={handleDeleteTodo}
+          >
+            <Trash2 size={16} />
+          </Button>
+          <Button variant="ghost" className="rounded-xl hover:bg-black/10">
+            <Ellipsis size={16} />
+          </Button>
+        </motion.div>
+      </div>
     </div>
   )
 }

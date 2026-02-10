@@ -130,7 +130,7 @@ export const TodoComponent = React.forwardRef<
           onCheckedChange={handleToggleComplete}
           className="border-core-muted-foreground/30 shadow-none"
         />
-        <div onClick={handleInitEditing} className="relative w-50">
+        <div onClick={handleInitEditing} className="relative w-60">
           {isEditing ? (
             <input
               ref={inputRef}
