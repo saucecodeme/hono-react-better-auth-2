@@ -3,7 +3,16 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 
 // icons
-import { AlertCircleIcon, Ellipsis, Trash2 } from 'lucide-react'
+import {
+  AlertCircleIcon,
+  CalendarDays,
+  Ellipsis,
+  Inbox,
+  Layers,
+  Plus,
+  Star,
+  Trash2,
+} from 'lucide-react'
 
 // Hono RPC
 import { hc } from 'hono/client'
@@ -16,6 +25,8 @@ import { Alert, AlertTitle } from '@/components/ui/alert'
 import { authClient } from '@/lib/auth-client.ts'
 import { Button } from '@/components/ui/button.tsx'
 import { TodoComponent } from '@/components/todo.tsx'
+
+import { useNavStore } from '@/lib/store.ts'
 
 import { cn } from '@/lib/utils.ts'
 import {
@@ -45,6 +56,8 @@ function RouteComponent() {
   const createTodoMutation = useCreateTodo()
   const deleteTodoMutation = useDeleteTodo()
 
+  const hideDisplay = useNavStore((state) => state.hideDisplay)
+
   const handleEditStart = (id: string) => {
     setEditingTodoId(id)
     setIsEditingMode(true)
@@ -65,6 +78,10 @@ function RouteComponent() {
   }
 
   useEffect(() => {
+    hideDisplay()
+  }, [hideDisplay])
+
+  useEffect(() => {
     // console.log('/todos page useEffect')
     if (!session && !isPending) {
       router.navigate({ to: '/signin' })
@@ -72,11 +89,63 @@ function RouteComponent() {
   }, [session, router, isPending])
 
   return (
-    <div className="bt relative flex justify-start min-h-[calc(100vh-80px)] p-[5%] pt-10">
-      <div className="w-80 bg-core-card rounded-xl"></div>
-      <div className="relative w-100 flex items-start justify-center pt-10">
-        <div className="flex flex-col gap-4">
-          {isLoading && (
+    <div className="relative flex justify-start min-h-[calc(100dvh)] pt-0 text-core-background">
+      <div className="w-65 px-2 py-10 bg-[#1e1d21] flex flex-col items-start gap-4">
+        <Button
+          variant="none"
+          size="sm"
+          className="h-fit py-1 w-full font-medium gap-1.5 flex justify-start"
+        >
+          <Inbox size={12} color="#18AEF8" />
+          <span>Inbox</span>
+        </Button>
+
+        <div className="w-full flex flex-col items-start gap-0">
+          <Button
+            variant="none"
+            size="sm"
+            className="h-fit py-1 w-full font-medium gap-1.5 flex justify-start"
+          >
+            <Star size={12} color="#FFD400" fill="#FFD400" />
+            <span>Today</span>
+          </Button>
+
+          <Button
+            variant="none"
+            size="sm"
+            className="h-fit py-1 w-full font-medium gap-1.5 flex justify-start"
+          >
+            <CalendarDays size={12} color="#FA1855" />
+            <span>Upcoming</span>
+          </Button>
+
+          <Button
+            variant="none"
+            size="sm"
+            className="h-fit py-1 w-full font-medium gap-1.5 flex justify-start"
+          >
+            <Layers size={12} color="#39A99D" />
+            <span>Anytime</span>
+          </Button>
+        </div>
+
+        <div className="w-[90%] self-center border-white/5 border-[0.5px]" />
+
+        <div className="w-full flex flex-col items-start gap-0">
+          <Button
+            variant="none"
+            size="sm"
+            className="h-fit py-1 w-full font-medium gap-1.5 flex justify-start"
+            onClick={handleCreateNewTodo}
+          >
+            <Plus size={12} />
+            <span>Add new todo</span>
+          </Button>
+        </div>
+      </div>
+      <div className="relative w-full flex items-start justify-center p-20 bg-[#262528]">
+        <div className="w-full flex flex-col items-start gap-4">
+          {/* {isLoading && (
             <div className="flex flex-col gap-2">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="flex items-center gap-2">
@@ -85,7 +154,7 @@ function RouteComponent() {
                 </div>
               ))}
             </div>
-          )}
+          )} */}
 
           {isError && (
             <Alert>
@@ -94,13 +163,14 @@ function RouteComponent() {
             </Alert>
           )}
 
-          <div className="flex flex-col items-center gap-0.5">
+          <div className="w-full flex flex-col items-start gap-1 text-sm">
             {data &&
               data.map((todo) => (
                 <TodoComponent
                   key={todo.id}
                   id={todo.id}
                   title={todo.title}
+                  description={todo.description}
                   completed={todo.completed}
                   onEditStart={handleEditStart}
                   onEditEnd={handleEditEnd}
@@ -114,15 +184,15 @@ function RouteComponent() {
               </div>
             )}
 
-            <motion.div className={cn(data && data.length > 0 ? 'mt-4' : '')}>
+            {/* <motion.div className={cn(data && data.length > 0 ? 'mt-4' : '')}>
               <Button
                 variant="linkAnimated"
                 onClick={handleCreateNewTodo}
-                className="font-semibold"
+                className="font-semibold opacity-10"
               >
                 Add new todo
               </Button>
-            </motion.div>
+            </motion.div> */}
           </div>
         </div>
 
@@ -146,18 +216,18 @@ function RouteComponent() {
               },
             },
           }}
-          className="fixed bottom-10 px-2 py-1 rounded-2xl flex items-center justify-center gap-0 bg-core-card"
+          className="fixed bottom-10 px-2 py-1 rounded-lg flex items-center justify-center gap-0 bg-[#343338]"
           data-ignore-click-outside
         >
           <Button
             variant="destructiveGhost"
-            className="rounded-xl"
+            className="rounded-lg"
             onClick={handleDeleteTodo}
           >
             <Trash2 size={16} />
           </Button>
-          <Button variant="ghost" className="rounded-xl hover:bg-black/10">
-            <Ellipsis size={16} />
+          <Button variant="none" className="rounded-lg">
+            <Ellipsis size={16} className="" />
           </Button>
         </motion.div>
       </div>

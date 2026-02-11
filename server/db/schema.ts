@@ -6,6 +6,8 @@ import {
   varchar,
   text,
   index,
+  uniqueIndex,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -20,6 +22,48 @@ export const todos = pgTable("todos", {
   createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 });
+
+export const tags = pgTable(
+  "tags",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    name: varchar({ length: 100 }).notNull(),
+    color: varchar({ length: 7 }), // Hex color code (e.g., #FFD400)
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp({ withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    // Composite unique index: prevents duplicate tag names per user + speeds up lookups
+    uniqueIndex("tags_userId_name_idx").on(table.userId, table.name),
+    // Index for querying all tags by user
+    index("tags_userId_idx").on(table.userId),
+  ]
+);
+
+export const todoTags = pgTable(
+  "todo_tags",
+  {
+    todoId: uuid("todo_id")
+      .notNull()
+      .references(() => todos.id, { onDelete: "cascade" }),
+    tagId: uuid("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    // Composite primary key: ensures uniqueness + saves UUID storage cost
+    primaryKey({ columns: [table.todoId, table.tagId] }),
+    // Index for reverse lookups (get all todos with a tag)
+    index("todoTags_tagId_idx").on(table.tagId),
+  ]
+);
 
 // better-auth schema
 
@@ -98,6 +142,8 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  todos: many(todos),
+  tags: many(tags),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -111,5 +157,39 @@ export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
     references: [user.id],
+  }),
+}));
+
+// Todo and Tag relations
+/*
+  Define how todos table is related to other table in databse
+  - A Todo belongs to one User
+  - A Todo has many TodoTags
+*/
+
+export const todosRelations = relations(todos, ({ one, many }) => ({
+  user: one(user, {
+    fields: [todos.userId],
+    references: [user.id],
+  }),
+  todoTags: many(todoTags),
+}));
+
+export const tagsRelations = relations(tags, ({ one, many }) => ({
+  user: one(user, {
+    fields: [tags.userId],
+    references: [user.id],
+  }),
+  todoTags: many(todoTags),
+}));
+
+export const todoTagsRelations = relations(todoTags, ({ one }) => ({
+  todo: one(todos, {
+    fields: [todoTags.todoId],
+    references: [todos.id],
+  }),
+  tag: one(tags, {
+    fields: [todoTags.tagId],
+    references: [tags.id],
   }),
 }));

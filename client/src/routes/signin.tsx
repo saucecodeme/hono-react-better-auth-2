@@ -4,8 +4,8 @@ import {
   redirect,
   useRouter,
 } from '@tanstack/react-router'
-import { AlertCircleIcon, KeyRound, Mail } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { AlertCircleIcon, ArrowLeft, KeyRound, Mail } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import {
   Card,
@@ -20,6 +20,9 @@ import { WarningMessage } from '@/components/WarningMessage'
 import { authClient } from '@/lib/auth-client'
 import { Loading } from '@/components/Loading'
 import { Alert, AlertTitle } from '@/components/ui/alert'
+import { useNavStore } from '@/lib/store'
+import { RegisterArt } from '@/assets'
+import registerBg2 from '@/assets/register-bg-2.png'
 
 export const Route = createFileRoute('/signin')({
   component: RouteComponent,
@@ -40,6 +43,7 @@ function RouteComponent() {
   })
   const [authError, setAuthError] = useState('')
   const [loading, setLoading] = useState(false)
+  const hideDisplay = useNavStore((state) => state.hideDisplay)
 
   const validationMessages = useMemo(() => {
     return {
@@ -119,10 +123,27 @@ function RouteComponent() {
     }
   }
 
+  useEffect(() => {
+    hideDisplay()
+  }, [hideDisplay])
+
   return (
-    <div className="relative flex items-center justify-center min-h-[calc(100vh-80px)] px-[5%] bg-core-background">
-      <div className="min-h-[600px] w-120 bg-core-foreground rounded-2xl p-10 text-core-background"></div>
-      <div className="min-h-[calc(100vh-120px)] w-100 flex items-center pb-20">
+    <div className="relative flex items-center justify-center min-h-[calc(100vh-80px)] mt-10 px-[5%] bg-core-background">
+      <div className="register-bg-container min-h-[600px] w-120 p-10 text-core-background flex items-center">
+        <img src={RegisterArt} />
+      </div>
+      <div className="min-h-[calc(100vh-120px)] w-100 flex flex-col justify-center items-start pb-20">
+        <Button
+          variant="ghostNav"
+          size="sm"
+          className="ml-6 hover:bg-core-card"
+          asChild
+        >
+          <Link to="/">
+            <ArrowLeft size={12} />
+            <h1>Back to Home</h1>
+          </Link>
+        </Button>
         <Card className="w-full h-fit max-w-md shadow-none bg-core-background">
           <CardHeader className="w-full flex flex-col items-start gap-1 px-8">
             <CardTitle className="font-recoleta font-bold text-3xl text-core-foreground">

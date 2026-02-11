@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
-import { AlertCircleIcon, KeyRound, Mail, User } from 'lucide-react'
+import { AlertCircleIcon, ArrowLeft, KeyRound, Mail, User } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +16,7 @@ import { InputWithIcon } from '@/components/ui/inputwithicon'
 import { authClient } from '@/lib/auth-client'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Loading } from '@/components/Loading'
+import { RegisterArt } from '@/assets'
 
 export const Route = createFileRoute('/signup')({
   component: RouteComponent,
@@ -216,10 +217,22 @@ function RouteComponent() {
   }
 
   return (
-    <div className="relative flex items-center justify-center min-h-[calc(100vh-80px)] px-[5%]">
-      <div className="min-h-[600px] w-120 bg-core-foreground rounded-2xl p-10 text-core-background"></div>
-
-      <div className="min-h-[calc(100vh-120px)] w-100 flex items-center pb-20">
+    <div className="relative flex items-center justify-center min-h-[calc(100vh-80px)] mt-10 px-[5%]">
+      <div className="register-bg-container min-h-[600px] w-120 p-10 text-core-background flex items-center">
+        <img src={RegisterArt} />
+      </div>
+      <div className="min-h-[calc(100vh-120px)] w-100 flex flex-col justify-center items-start pb-20">
+        <Button
+          variant="ghostNav"
+          size="sm"
+          className="ml-6 hover:bg-core-card"
+          asChild
+        >
+          <Link to="/">
+            <ArrowLeft size={12} />
+            <h1>Back to Home</h1>
+          </Link>
+        </Button>
         <Card className="w-full max-w-sm shadow-none bg-core-background">
           <CardHeader className="w-full flex flex-col items-start gap-1 px-8">
             <CardTitle className="font-recoleta font-bold text-3xl text-core-foreground">
