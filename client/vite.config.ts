@@ -24,7 +24,7 @@ export default defineConfig({
   },
   // Add these performance optimizations
   optimizeDeps: {
-    include: ['react', 'react-dom', '@tanstack/react-router'],
+    include: ['react', 'react-dom', '@tanstack/react-router', 'zustand'],
   },
   server: {
     proxy: {
