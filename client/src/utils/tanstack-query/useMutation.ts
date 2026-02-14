@@ -17,10 +17,7 @@ export const useCreateTodo = () => {
       description?: string
     }) => {
       const res = await client.api.todos.$post({
-        json: {
-          title,
-          description,
-        },
+        json: { title, description },
       })
       if (!res.ok) {
         const errorData = await res.json()
@@ -30,7 +27,6 @@ export const useCreateTodo = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })
-      // toast.success('Todo created successfully')
     },
     onError: (error) => {
       toast.error(error.message)
@@ -54,11 +50,7 @@ export const useUpdateTodo = () => {
     }) => {
       const res = await client.api.todos[':id'].$patch({
         param: { id },
-        json: {
-          title,
-          description,
-          completed,
-        },
+        json: { title, description, completed },
       })
       if (!res.ok) {
         const errorData = await res.json()
@@ -68,7 +60,6 @@ export const useUpdateTodo = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })
-      // toast.success('Todo updated successfully')
     },
     onError: (error) => {
       toast.error(error.message)
@@ -90,7 +81,6 @@ export const useDeleteTodo = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })
-      // toast.success('Todo deleted successfully')
     },
     onError: (error) => {
       toast.error(error.message)
@@ -137,8 +127,7 @@ export const useCreateTag = () => {
       if (!res.ok) {
         const errorData = await res.json()
         throw new Error(
-          ('error' in errorData && errorData.error) ||
-            'Failed to create tag',
+          ('error' in errorData && errorData.error) || 'Failed to create tag',
         )
       }
       return res.json()
@@ -162,8 +151,7 @@ export const useDeleteTag = () => {
       if (!res.ok) {
         const errorData = await res.json()
         throw new Error(
-          ('error' in errorData && errorData.error) ||
-            'Failed to delete tag',
+          ('error' in errorData && errorData.error) || 'Failed to delete tag',
         )
       }
       return res.json()

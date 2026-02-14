@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 
@@ -47,7 +47,7 @@ export const Route = createFileRoute('/todos')({
 function RouteComponent() {
   const router = useRouter()
   const { data: session, isPending } = authClient.useSession()
-  const { data, isError, error, isLoading } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ['todos'],
     queryFn: async () => {
       const res = await client.api.todos.$get()
@@ -73,25 +73,29 @@ function RouteComponent() {
 
   // const hideDisplay = useNavStore((state) => state.hideDisplay)
 
-  const handleEditStart = (id: string) => {
+  const handleEditStart = useCallback((id: string) => {
     setEditingTodoId(id)
     setIsEditingMode(true)
-  }
-  const handleEditEnd = () => {
+  }, [])
+
+  const handleEditEnd = useCallback(() => {
     setEditingTodoId(null)
     setIsEditingMode(false)
-  }
+  }, [])
 
   const handleCreateNewTodo = async () => {
     const newTodo = await createTodoMutation.mutateAsync({ title: 'New todo' })
     handleEditStart(newTodo.data.id)
   }
 
-  const handleDeleteTodo = async () => {
-    if (!editingTodoId) return
-    await deleteTodoMutation.mutateAsync({ id: editingTodoId })
-    handleEditEnd()
-  }
+  const handleDeleteTodo = useCallback(
+    async (id: string) => {
+      await deleteTodoMutation.mutateAsync({ id })
+      setEditingTodoId(null)
+      setIsEditingMode(false)
+    },
+    [deleteTodoMutation],
+  )
 
   const handleSignout = async () => {
     try {
@@ -256,7 +260,7 @@ function RouteComponent() {
                   onEditEnd={handleEditEnd}
                   handleDeleteTodo={handleDeleteTodo}
                   tags={tags}
-                  todoTags={todo.tags || []}
+                  todoTags={todo.tags}
                 />
               ))}
 
@@ -304,7 +308,7 @@ function RouteComponent() {
           <Button
             variant="destructiveGhost"
             className="rounded-lg"
-            onClick={handleDeleteTodo}
+            onClick={() => editingTodoId && handleDeleteTodo(editingTodoId)}
           >
             <Trash2 size={16} />
           </Button>

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import {
+  Archive,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
   Moon,
   Plus,
   Star,
-  Archive,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -57,6 +57,17 @@ export function CalendarDropdown({
     viewMonth === today.getMonth() &&
     viewYear === today.getFullYear()
 
+  const isPast = (day: number) => {
+    const date = new Date(viewYear, viewMonth, day)
+    // Zero out time to compare dates only
+    const todayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    )
+    return date < todayStart
+  }
+
   const isSelected = (day: number) => {
     if (!selectedDate) return false
     return (
@@ -66,7 +77,12 @@ export function CalendarDropdown({
     )
   }
 
+  const isCurrentOrPastMonth =
+    viewYear < today.getFullYear() ||
+    (viewYear === today.getFullYear() && viewMonth <= today.getMonth())
+
   const handlePrevMonth = () => {
+    if (isCurrentOrPastMonth) return
     if (viewMonth === 0) {
       setViewMonth(11)
       setViewYear(viewYear - 1)
@@ -150,27 +166,26 @@ export function CalendarDropdown({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        data-ignore-click-outside
         align="end"
-        className="w-64 p-0 bg-sloth-aside-background border-0 shadow-lg rounded-lg text-core-background"
+        className="w-56 p-0 bg-sloth-aside-background border-0 shadow-lg rounded-lg text-core-background"
       >
         {/* Quick options */}
         <div className="flex flex-col px-1 pt-1">
           <button
             type="button"
-            className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-sm font-medium hover:bg-[#4c4c50] transition-colors text-left"
+            className="flex items-center gap-2 px-2.5 py-1 rounded-md text-sm font-medium hover:bg-sloth-aside-background-hover transition-colors text-left"
             onClick={handleSelectToday}
           >
             <Star size={14} color="#FFD400" fill="#FFD400" />
             <span>Today</span>
           </button>
-          <button
+          {/* <button
             type="button"
             className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-sm font-medium hover:bg-[#4c4c50] transition-colors text-left"
           >
             <Moon size={14} color="#A0A0FF" />
             <span>This Evening</span>
-          </button>
+          </button> */}
         </div>
 
         {/* Calendar */}
@@ -184,14 +199,20 @@ export function CalendarDropdown({
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="p-0.5 rounded hover:bg-[#4c4c50] transition-colors"
+                disabled={isCurrentOrPastMonth}
+                className={cn(
+                  'p-0.5 rounded transition-colors',
+                  isCurrentOrPastMonth
+                    ? 'opacity-30 cursor-default'
+                    : 'hover:bg-sloth-aside-background-hover',
+                )}
               >
                 <ChevronLeft size={12} className="text-core-background/50" />
               </button>
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-0.5 rounded hover:bg-[#4c4c50] transition-colors"
+                className="p-0.5 rounded hover:bg-sloth-aside-background-hover transition-colors"
               >
                 <ChevronRight size={12} className="text-core-background/50" />
               </button>
@@ -203,7 +224,7 @@ export function CalendarDropdown({
             {DAY_LABELS.map((label) => (
               <div
                 key={label}
-                className="text-[0.65rem] font-medium text-core-background/40 text-center py-0.5"
+                className="text-[0.65rem] font-medium text-core-background/40 text-center py-0"
               >
                 {label}
               </div>
@@ -212,35 +233,44 @@ export function CalendarDropdown({
 
           {/* Day grid */}
           <div className="grid grid-cols-7">
-            {cells.map((cell) => (
-              <button
-                key={cell.key}
-                type="button"
-                disabled={!cell.isCurrentMonth}
-                onClick={() =>
-                  cell.isCurrentMonth && handleSelectDay(cell.day)
-                }
-                className={cn(
-                  'text-xs h-7 w-full rounded-md transition-colors font-medium',
-                  cell.isCurrentMonth
-                    ? 'text-core-background hover:bg-[#4c4c50] cursor-pointer'
-                    : 'text-core-background/20 cursor-default',
-                  isToday(cell.day) &&
-                    cell.isCurrentMonth &&
-                    'text-[#FFD400]',
-                  isSelected(cell.day) &&
-                    cell.isCurrentMonth &&
-                    'bg-[#4c4c50] text-core-background',
-                )}
-              >
-                {cell.day}
-              </button>
-            ))}
+            {cells.map((cell) => {
+              const past = cell.isCurrentMonth && isPast(cell.day)
+              const disabled = !cell.isCurrentMonth || past
+              return (
+                <button
+                  data-ignore-click-outside
+                  key={cell.key}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() =>
+                    cell.isCurrentMonth && !past && handleSelectDay(cell.day)
+                  }
+                  className={cn(
+                    'py-1 text-xs w-full rounded transition-colors flex items-center justify-center',
+                    cell.isCurrentMonth && !past
+                      ? 'text-sloth-foreground hover:bg-sloth-aside-background-hover cursor-pointer'
+                      : 'text-sloth-foreground/10 cursor-default',
+                    isToday(cell.day) &&
+                      cell.isCurrentMonth &&
+                      'text-[#FFD400]',
+                    isSelected(cell.day) &&
+                      cell.isCurrentMonth &&
+                      'bg-[#4c4c50] text-core-background',
+                  )}
+                >
+                  {isToday(cell.day) && cell.isCurrentMonth ? (
+                    <Star size={12} fill="#FFD400" />
+                  ) : (
+                    cell.day
+                  )}
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {/* Bottom options */}
-        <div className="flex flex-col px-1 pb-1 border-t border-white/5">
+        {/* <div className="flex flex-col px-1 pb-1 border-t border-white/5">
           <button
             type="button"
             className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-sm font-medium hover:bg-[#4c4c50] transition-colors text-left mt-1"
@@ -256,7 +286,7 @@ export function CalendarDropdown({
             <Plus size={14} />
             <span>Add Reminder</span>
           </button>
-        </div>
+        </div> */}
       </PopoverContent>
     </Popover>
   )
