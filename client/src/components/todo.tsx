@@ -57,7 +57,6 @@ export const TodoComponent = React.forwardRef<
     tags = [],
     todoTags = [],
   } = props
-  console.log(`Title: ${title}`)
   const [isEditing, setIsEditing] = useState(initialEditing)
   const [editedTitle, setEditedTitle] = useState(title)
   const [editedDesc, setEditedDesc] = useState(description)
@@ -155,10 +154,13 @@ export const TodoComponent = React.forwardRef<
   // }
 
   const handleFormEditing = (event: React.ChangeEvent<HTMLFormElement>) => {
+    // console.log('handleFormEditing')
+    if (!isEditing) return
     const form = event.currentTarget
     const formData = new FormData(form)
-    const rawTitle = (formData.get('title') as string) || ''
-    const rawDescription = (formData.get('description') as string) || ''
+    const rawTitle = formData.get('title') as string
+    const rawDescription = formData.get('description') as string
+    // console.log(`Raw Title: ${rawTitle}\nRaw Description: ${rawDescription}`)
     const trimmedTitle = rawTitle.trim()
     const trimmedDescription = rawDescription.trim()
     if (trimmedTitle !== title) setEditedTitle(trimmedTitle)
@@ -166,6 +168,7 @@ export const TodoComponent = React.forwardRef<
   }
 
   const handleSaveEditing = useCallback(async () => {
+    // console.log('handleSaveEditing')
     const trimmedTitle = editedTitle.trim()
     const trimmedDescription = editedDesc !== null ? editedDesc.trim() : ''
     if (
@@ -194,6 +197,7 @@ export const TodoComponent = React.forwardRef<
   ])
 
   const handleToggleComplete = async () => {
+    // console.log('handleToggleComplete')
     await updateTodoMutation.mutateAsync({
       id: props.id,
       completed: !completed,
@@ -201,6 +205,7 @@ export const TodoComponent = React.forwardRef<
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    // console.log('handleKeyDown')
     const isTextArea = event.target instanceof HTMLTextAreaElement
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
       // Treat Cmd+Enter or Ctrl+Enter as save shortcut
