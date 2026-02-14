@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getTodosByUserId, getTodoTags } from "../db/queries";
+import { getTodosWithTagsByUserId } from "../db/queries";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { todoInsertSchema, todoUpdateSchema, type HonoEnv } from "../types";
 import { createTodo, deleteTodo, updateTodo, addTagToTodo, removeTagFromTodo } from "../db/mutation";
@@ -11,14 +11,7 @@ export const todos = new Hono<HonoEnv>()
   .get("/", async (c) => {
     const user = c.get("user");
     try {
-      const todosList = await getTodosByUserId(user.id);
-      // Fetch tags for each todo
-      const todosWithTags = await Promise.all(
-        todosList.map(async (todo) => {
-          const tags = await getTodoTags(user.id, todo.id);
-          return { ...todo, tags };
-        })
-      );
+      const todosWithTags = await getTodosWithTagsByUserId(user.id);
       return c.json(todosWithTags);
     } catch (error) {
       console.error("Error fetching todos:", error);

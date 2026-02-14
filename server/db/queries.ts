@@ -14,6 +14,43 @@ export const getTodosByUserId = async (userId: string) => {
     .orderBy(asc(todos.createdAt));
 };
 
+export const getTodosWithTagsByUserId = async (userId: string) => {
+  const rows = await db
+    .select({
+      todo: todos,
+      tag: {
+        id: tags.id,
+        name: tags.name,
+        color: tags.color,
+        userId: tags.userId,
+        createdAt: tags.createdAt,
+        updatedAt: tags.updatedAt,
+      },
+    })
+    .from(todos)
+    .leftJoin(todoTags, eq(todos.id, todoTags.todoId))
+    .leftJoin(tags, eq(todoTags.tagId, tags.id))
+    .where(eq(todos.userId, userId))
+    .orderBy(asc(todos.createdAt));
+
+  // Group tags by todo — single pass over the flat join result
+  const todosMap = new Map<
+    string,
+    (typeof rows)[0]["todo"] & { tags: NonNullable<(typeof rows)[0]["tag"]>[] }
+  >();
+
+  for (const row of rows) {
+    if (!todosMap.has(row.todo.id)) {
+      todosMap.set(row.todo.id, { ...row.todo, tags: [] });
+    }
+    if (row.tag) {
+      todosMap.get(row.todo.id)!.tags.push(row.tag);
+    }
+  }
+
+  return Array.from(todosMap.values());
+};
+
 export const getTagsByUserId = async (userId: string) => {
   return await db
     .select()
