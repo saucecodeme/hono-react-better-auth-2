@@ -150,23 +150,6 @@ function RouteComponent() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* <div className="bt mb-8 p-1 rounded-full flex gap-1">
-            <Button
-              className="h-8 flex-1 font-bold text-neutral rounded-full text-sm flex items-center justify-center"
-              asChild
-            >
-              <Link to="/signin">Sign in</Link>
-            </Button>
-
-            <Button
-              variant="ghost"
-              className={`h-8 flex-1 font-bold text-muted-foreground rounded-full text-sm flex items-center justify-center`}
-              asChild
-            >
-              <Link to="/signup">Sign up</Link>
-            </Button>
-          </div> */}
-
             <form onChange={handleFormChange} onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2 mb-4">
                 <div className="grid gap-1">
@@ -228,6 +211,7 @@ function RouteComponent() {
                 </Alert>
               )}
             </form>
+
             <div className="w-full py-3 flex justify-center items-center gap-2 text-sm text-muted-foreground">
               <span>Don't have an account?</span>
               <Link to="/signup" className="text-sloth-foreground">
