@@ -258,7 +258,8 @@ export const TodoComponent = React.memo(
     }
 
     const internalRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLInputElement>(null)
+    // const inputRef = useRef<HTMLInputElement>(null)
+    const inputRef = useRef<HTMLTextAreaElement>(null)
     const prevIsEditingRef = useRef(false)
 
     // Combine the forwarded ref with the internal ref
@@ -334,6 +335,7 @@ export const TodoComponent = React.memo(
     }
 
     const handleSelectDueDate = async (date: Date | null) => {
+      console.log(date)
       await updateTodoMutation.mutateAsync({
         id,
         dueAt: date ? date.toISOString() : null,
@@ -403,14 +405,24 @@ export const TodoComponent = React.memo(
       }
     }
 
-    // Focus title input only when entering edit mode
+    const autoResizeTextarea = useCallback(() => {
+      const el = inputRef.current
+      if (!el) return
+      el.style.height = 'auto'
+      el.style.height = `${el.scrollHeight}px`
+    }, [])
+
+    // Focus title input only when entering edit mode (skip on mobile to avoid keyboard popup)
     useEffect(() => {
       if (isEditing && !prevIsEditingRef.current && inputRef.current) {
-        inputRef.current.focus()
-        // inputRef.current.select() // ← Select all text for easy editing
+        const isMobile = window.matchMedia('(max-width: 767px)').matches
+        if (!isMobile) {
+          inputRef.current.focus()
+        }
+        autoResizeTextarea()
       }
       prevIsEditingRef.current = isEditing
-    }, [isEditing])
+    }, [isEditing, autoResizeTextarea])
 
     // Handle click outside to save
     useEffect(() => {
@@ -473,46 +485,69 @@ export const TodoComponent = React.memo(
           onChange={handleFormEditing}
           onKeyDown={handleKeyDown}
         >
+          {/* title-description */}
           <div className="w-full flex gap-2">
             <Checkbox
               data-checkbox
               checked={completed}
               onCheckedChange={handleToggleComplete}
-              className="size-3 mt-1 rounded-[3px] border-core-background/30 data-[state=checked]:border-0 data-[state=checked]:bg-[#18AEF8] data-[state=checked]:text-core-foreground"
+              className="size-3.5 mt-1 md:mt-1 rounded-[3px] border-core-background/30 data-[state=checked]:border-0 data-[state=checked]:bg-[#18AEF8] data-[state=checked]:text-core-foreground"
             />
             <div className="w-full flex flex-col justify-start items-start">
-              <div onClick={handleInitEditing} className="relative w-full">
+              <div
+                onClick={handleInitEditing}
+                className="relative w-full text-base md:text-sm"
+              >
                 {isEditing ? (
-                  <input
+                  // <input
+                  //   ref={inputRef}
+                  //   id={`title-${id}`}
+                  //   name="title"
+                  //   type="text"
+                  //   defaultValue={editedTitle}
+                  //   // onChange={handleEditing}
+                  //   // onKeyDown={handleKeyDown}
+                  //   disabled={updateTodoMutation.isPending}
+                  //   className="w-[95%] md:w-[80%] border-0 bt ring-0! outline-none! shadow-none focus-visible:border-0! focus-visible:ring-0 focus-visible:outline-none flex-wrap"
+                  // />
+
+                  <textarea
                     ref={inputRef}
                     id={`title-${id}`}
                     name="title"
-                    type="text"
                     defaultValue={editedTitle}
-                    // onChange={handleEditing}
-                    // onKeyDown={handleKeyDown}
                     disabled={updateTodoMutation.isPending}
-                    className="w-[80%] border-0! ring-0! outline-none! shadow-none focus-visible:border-0! focus-visible:ring-0 focus-visible:outline-none"
+                    onInput={autoResizeTextarea}
+                    // onKeyDown={(e) => {
+                    //   if (e.key === 'Enter') e.preventDefault()
+                    // }}
+                    className="w-[95%] md:w-[80%] border-0! ring-0! outline-none! shadow-none focus-visible:border-0! focus-visible:ring-0 focus-visible:outline-none resize-none overflow-hidden"
+                    rows={1}
                   />
                 ) : (
-                  <div className="flex justify-start items-center gap-3">
-                    <span className="w-fit truncate">{editedTitle}</span>
+                  <div className="relative w-full flex justify-start items-center gap-3 cursor-pointer">
+                    <span className="w-[80vw] md:w-fit min-w-0 truncate">
+                      {editedTitle}
+                    </span>
                     {todoTags.length > 0 && (
-                      <div className="flex justify-start items-center text-sloth-foreground/70 text-[0.75rem] gap-1">
-                        {todoTags.map((tag) => (
-                          <span
-                            key={tag.id}
-                            className="border px-2 rounded-full lowercase"
-                            style={{
-                              borderColor: tag.color
-                                ? `${tag.color}50`
-                                : '#80808050',
-                            }}
-                          >
-                            {tag.name}
-                          </span>
-                        ))}
-                      </div>
+                      <>
+                        <Tag className="md:hidden size-3 text-sloth-foreground/70" />
+                        <div className="hidden md:flex justify-start items-center text-sloth-foreground/70 text-[0.75rem] gap-1">
+                          {todoTags.map((tag) => (
+                            <span
+                              key={tag.id}
+                              className="border px-2 rounded-full lowercase"
+                              style={{
+                                borderColor: tag.color
+                                  ? `${tag.color}50`
+                                  : '#80808050',
+                              }}
+                            >
+                              {tag.name}
+                            </span>
+                          ))}
+                        </div>
+                      </>
                     )}
                   </div>
                 )}
@@ -557,6 +592,7 @@ export const TodoComponent = React.memo(
               }}
               className="w-full"
             >
+              {/* tag */}
               {todoTags.length > 0 && (
                 <div className="px-2 flex gap-2 text-[0.75rem] flex-wrap">
                   {todoTags.map((tag) => (
@@ -586,7 +622,9 @@ export const TodoComponent = React.memo(
                   ))}
                 </div>
               )}
+
               <div className="mt-2 flex justify-between items-end">
+                {/* startAt-dueAt */}
                 <div className="flex flex-col items-start">
                   {startAt &&
                     (() => {
@@ -660,6 +698,7 @@ export const TodoComponent = React.memo(
                     })()}
                 </div>
 
+                {/* calendar-tag-calendar */}
                 <div className="flex items-center gap-0.5">
                   {!startAt && (
                     <CalendarDropdown
@@ -693,38 +732,46 @@ export const TodoComponent = React.memo(
                       align="end"
                       className="relative w-48 bg-sloth-aside-background border-0 shadow-none rounded-lg text-core-background overflow-visible"
                     >
-                      {isColorPanelOpen && (
-                        <div className="absolute right-full top-0 mr-2 w-[120px] bg-sloth-aside-background rounded-lg p-2 pt-0 shadow-lg z-50">
-                          <span className="text-muted-foreground text-xs">
-                            Tag color
-                          </span>
-                          <div className="grid grid-cols-5 gap-2 mt-1">
-                            {TAG_COLORS.map((color) => (
-                              <button
-                                key={color}
-                                type="button"
-                                className={cn(
-                                  'size-4 rounded cursor-pointer transition-transform hover:scale-110 focus:outline-none',
-                                  selectedTagColor === color &&
-                                    'ring-1 ring-sloth-foreground/50 ring-offset-1 ring-offset-sloth-aside-background',
-                                )}
-                                style={{ backgroundColor: color }}
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  e.stopPropagation()
-                                  setSelectedTagColor(color)
-                                  setIsColorPanelOpen(false)
-                                }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                      <AnimatePresence>
+                        {isColorPanelOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                            className="absolute right-full top-0 mr-2 w-[120px] bg-sloth-aside-background rounded-lg p-2 pt-0 shadow-lg z-50 origin-top-right"
+                          >
+                            <span className="text-muted-foreground text-xs">
+                              Tag color
+                            </span>
+                            <div className="grid grid-cols-5 gap-2 mt-1">
+                              {TAG_COLORS.map((color) => (
+                                <button
+                                  key={color}
+                                  type="button"
+                                  className={cn(
+                                    'size-4 rounded cursor-pointer transition-transform hover:scale-110 focus:outline-none',
+                                    selectedTagColor === color &&
+                                      'ring-1 ring-sloth-foreground/50 ring-offset-1 ring-offset-sloth-aside-background',
+                                  )}
+                                  style={{ backgroundColor: color }}
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    setSelectedTagColor(color)
+                                    setIsColorPanelOpen(false)
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                       <div className="relative flex items-center">
                         <Button
                           size="icon-xs"
                           type="button"
-                          className="z-10 absolute top-0.5 lef-0 bg-sloth-aside-background/0 hover:bg-sloth-aside-background/0"
+                          className="z-10 absolute top-0.75 lef-0 bg-sloth-aside-background/0 hover:bg-sloth-aside-background/0"
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
@@ -767,7 +814,7 @@ export const TodoComponent = React.memo(
                           // startIcon={Plus}
                           value={tagSearch}
                           onChange={(e) => setTagSearch(e.target.value)}
-                          className="my-0.5 pl-7 h-6 rounded-md ring-0 focus-visible:ring-0 border-0 focus:bg-sloth-aside-background-hover"
+                          className="my-0.5 pl-7 h-6.5 rounded-md ring-0 focus-visible:ring-0 border-0 focus:bg-sloth-aside-background-hover"
                           onKeyDown={(e) => {
                             e.stopPropagation()
                             if (e.key === 'Enter') {
