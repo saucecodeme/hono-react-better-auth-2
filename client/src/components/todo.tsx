@@ -1,15 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import {
-  CalendarDays,
-  Check,
-  Flag,
-  FlagTriangleRight,
-  Plus,
-  Star,
-  Tag,
-  X,
-} from 'lucide-react'
+import { CalendarDays, Check, Flag, Plus, Star, Tag, X } from 'lucide-react'
 import { Checkbox } from './ui/checkbox'
 import {
   useAddTagToTodo,
@@ -22,11 +13,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
+  // DropdownMenuPortal,
+  // DropdownMenuSeparator,
+  // DropdownMenuSub,
+  // DropdownMenuSubContent,
+  // DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
