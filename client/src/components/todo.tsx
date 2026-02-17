@@ -900,14 +900,14 @@ export const TodoComponent = React.memo(
                         align="end"
                         className="relative w-48 bg-sloth-aside-background border-0 shadow-none rounded-lg text-core-background overflow-visible"
                       >
-                        {/* <AnimatePresence>
+                        <AnimatePresence>
                           {isColorPanelOpen && (
                             <motion.div
                               initial={{ opacity: 0, scale: 0.95 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.95 }}
                               transition={{ duration: 0.15, ease: 'easeOut' }}
-                              className="absolute right-full top-0 mr-2 w-[120px] bg-sloth-aside-background rounded-lg p-2 pt-0 shadow-lg z-50 origin-top-right"
+                              className="absolute right-full top-0 mr-2 w-30 bg-sloth-aside-background rounded-lg p-2 pt-0 shadow-lg z-50 origin-top-right"
                             >
                               <span className="text-muted-foreground text-xs">
                                 Tag color
@@ -934,7 +934,7 @@ export const TodoComponent = React.memo(
                               </div>
                             </motion.div>
                           )}
-                        </AnimatePresence> */}
+                        </AnimatePresence>
                         <div className="relative flex items-center">
                           <Button
                             size="icon-xs"
@@ -947,7 +947,7 @@ export const TodoComponent = React.memo(
                             }}
                           >
                             <span
-                              className="size-4 rounded"
+                              className="size-3.5 rounded-xs"
                               style={{
                                 backgroundColor: selectedTagColor ?? '#000000',
                               }}
