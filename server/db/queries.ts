@@ -60,11 +60,7 @@ export const getTagsByUserId = async (userId: string) => {
 };
 
 export const getTagById = async (userId: string, tagId: string) => {
-  const [tag] = await db
-    .select()
-    .from(tags)
-    .where(eq(tags.id, tagId))
-    .limit(1);
+  const [tag] = await db.select().from(tags).where(eq(tags.id, tagId)).limit(1);
 
   // Ensure the tag belongs to the user
   if (tag && tag.userId === userId) {
