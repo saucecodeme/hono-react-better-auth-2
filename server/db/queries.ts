@@ -1,4 +1,4 @@
-import { asc, desc, eq, and } from "drizzle-orm";
+import { asc, eq, and } from "drizzle-orm";
 import { db } from "./db";
 import { todos, tags, todoTags } from "./schema";
 
