@@ -1,13 +1,8 @@
-import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
-import {
-  // drizzle as neonDrizzle,
-  NeonDatabase,
-} from "drizzle-orm/neon-serverless";
+import { drizzle } from "drizzle-orm/node-postgres";
 import { drizzle as neonDrizzle } from "drizzle-orm/neon-http";
-// import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import { Pool } from "pg";
-import { Pool as neonPool, neon, neonConfig } from "@neondatabase/serverless";
-import * as ws from "ws";
+import { neon, neonConfig } from "@neondatabase/serverless";
+import ws from "ws";
 import * as schema from "./schema";
 
 neonConfig.webSocketConstructor = ws;
