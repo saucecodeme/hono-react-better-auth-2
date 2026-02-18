@@ -106,7 +106,7 @@ export const infra = new Hono<HonoEnv>()
   .post("/", async (c) => {
     // Testing S3 upload with a sample file
     const user = c.get("user");
-    const filePath = "./server/assets/humation.png";
+    const filePath = "./server/assets/humation.png"; // Just for testing purpose
     try {
       const originalName = extractFilenameFromPath(filePath);
       const key = generateFilename(originalName, user.id);
