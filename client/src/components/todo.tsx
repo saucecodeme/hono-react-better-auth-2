@@ -569,7 +569,7 @@ export const TodoComponent = React.memo(
                       name="description"
                       placeholder="Notes"
                       defaultValue={description ?? ''}
-                      className="mt-2 mb-4 min-h-10 w-full field-sizing-content resize-none outline-none"
+                      className="mt-2 mb-4 min-h-10 w-full field-sizing-content resize-none outline-none text-base md:text-sm"
                     />
                   </motion.div>
                 )}
@@ -596,7 +596,7 @@ export const TodoComponent = React.memo(
                   {todoTags.map((tag) => (
                     <span
                       key={tag.id}
-                      className="group/tag inline-flex items-center gap-0.5 px-2 py-0.5 rounded-sm font-semibold cursor-default"
+                      className="group/tag inline-flex items-center gap-0.5 px-2 py-0.5 rounded-sm font-bold md:font-semibold cursor-default"
                       style={{
                         backgroundColor: tag.color
                           ? `${tag.color}90`
@@ -765,7 +765,7 @@ export const TodoComponent = React.memo(
                         )}
                         onClick={() => handleChangeDropdownMenu(true)}
                       >
-                        <Tag size={12} />
+                        <Tag className="size-4 md:size-3" />
                       </Button>
                       <Dialog
                         open={isTagMenuOpen}
@@ -773,7 +773,7 @@ export const TodoComponent = React.memo(
                       >
                         <DialogContent
                           showCloseButton={true}
-                          className="w-[80%] max-w-sm border-0 bg-sloth-aside-background text-core-background p-4 gap-4 max-h-[85vh] overflow-y-auto rounded-xl"
+                          className="w-[80%] max-w-sm border-0 bg-sloth-aside-background text-sloth-foreground p-4 pb-6 gap-4 max-h-[85vh] overflow-y-auto rounded-xl"
                         >
                           <DialogHeader>
                             <DialogTitle>Tags</DialogTitle>
@@ -789,7 +789,7 @@ export const TodoComponent = React.memo(
                                     duration: 0.15,
                                     ease: 'easeOut',
                                   }}
-                                  className="w-[120px] bg-sloth-aside-background rounded-lg p-2 pt-0 shadow-lg"
+                                  className="w-30 bg-sloth-aside-background rounded-lg p-2 pt-0 shadow-lg"
                                 >
                                   <span className="text-muted-foreground text-xs">
                                     Tag color
@@ -822,7 +822,7 @@ export const TodoComponent = React.memo(
                               <Button
                                 size="icon-xs"
                                 type="button"
-                                className="z-10 absolute top-1/2 -translate-y-1/2 left-2 bg-sloth-aside-background/0 hover:bg-sloth-aside-background/0"
+                                className="z-10 absolute top-1/2 -translate-y-1/2 left-1.5 bg-sloth-aside-background/0 hover:bg-sloth-aside-background/0"
                                 onClick={(e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
@@ -846,7 +846,7 @@ export const TodoComponent = React.memo(
                                 placeholder="Search or add tag"
                                 value={tagSearch}
                                 onChange={(e) => setTagSearch(e.target.value)}
-                                className="w-full md:my-0.5 pl-10 md:pl-7 h-10 md:h-6.5 text-lg rounded-md ring-0 focus-visible:ring-0 border-0 focus:bg-sloth-aside-background-hover"
+                                className="w-full md:my-0.5 pl-10 md:pl-7 h-8.5 md:h-6.5 text-base rounded-md ring-0 focus-visible:ring-0 border-0 focus:bg-sloth-aside-background-hover"
                                 onKeyDown={(e) => {
                                   e.stopPropagation()
                                   if (e.key === 'Enter') {
@@ -858,7 +858,7 @@ export const TodoComponent = React.memo(
                             </div>
 
                             <div className="relative">
-                              <div className="flex flex-col gap-0.5 max-h-48 pb-4 overflow-y-auto">
+                              <div className="flex flex-col gap-0.5 max-h-50 pb-4 overflow-y-auto">
                                 {filteredTags.length > 0
                                   ? filteredTags.map((tag) => {
                                       const isTagAdded = todoTags.some(
@@ -917,10 +917,10 @@ export const TodoComponent = React.memo(
                                   </div>
                                 )}
                               </div>
-                              <div
+                              {/* <div
                                 aria-hidden
                                 className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-linear-to-t from-sloth-aside-background to-transparent"
-                              />
+                              /> */}
                             </div>
                           </div>
                         </DialogContent>
