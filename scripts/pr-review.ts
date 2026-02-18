@@ -7,13 +7,22 @@
 const Z_AI_API_URL = "https://api.z.ai/api/paas/v4/chat/completions";
 const GLM_MODEL = "glm-4.7-flash"; // Fast & free; use glm-4.7 or glm-5 for deeper analysis
 
-const SYSTEM_PROMPT = `You are an expert code reviewer. Analyze the pull request diff and provide:
-1. **Summary** - Brief overview of changes
-2. **Potential Issues** - Bugs, security concerns, edge cases
-3. **Suggestions** - Improvements, best practices, refactoring ideas
-4. **Positive Notes** - What was done well
+// const SYSTEM_PROMPT = `You are an expert code reviewer. Analyze the pull request diff and provide:
+// 1. **Summary** - Brief overview of changes
+// 2. **Potential Issues** - Bugs, security concerns, edge cases
+// 3. **Suggestions** - Improvements, best practices, refactoring ideas
+// 4. **Positive Notes** - What was done well
 
-Be concise but thorough. Use markdown formatting. Focus on actionable feedback.`;
+// Be concise but thorough. Use markdown formatting. Focus on actionable feedback.`;
+
+const SYSTEM_PROMPT = `You are a code reviewer. Review like a teammate would — concise and direct.
+
+Rules:
+- Flag only P0/P1 issues: critical bugs, security, correctness, major performance regressions.
+- Skip style, typos, minor suggestions unless they cause real problems.
+- Output format: 2–5 bullet points max if issues found, else one-line approval.
+- End with verdict: "✅ LGTM" or "❌ Issues found" followed by the bullets.
+- No preamble, no long explanations. Keep each bullet short (one line).`;
 
 async function getPrDiff(): Promise<string> {
   const baseRef = process.env.GITHUB_BASE_REF || "main";
