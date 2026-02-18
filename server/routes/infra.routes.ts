@@ -11,8 +11,22 @@ const bucketRegion = process.env.BUCKET_REGION;
 const accessKey = process.env.ACCESS_KEY;
 const secretAccessKey = process.env.SECRET_ACCESS_KEY;
 
+const missing = [
+  !bucketName && "BUCKET_NAME",
+  !bucketRegion && "BUCKET_REGION",
+  !accessKey && "ACCESS_KEY",
+  !secretAccessKey && "SECRET_ACCESS_KEY",
+].filter(Boolean);
+
+if (missing.length > 0) {
+  throw new Error(
+    `Missing required S3 environment variables: ${missing.join(", ")}. ` +
+      `Add them to your .env file or environment.`
+  );
+}
+
 const s3 = new S3Client({
-  region: bucketRegion,
+  region: bucketRegion!,
   credentials: {
     accessKeyId: accessKey!,
     secretAccessKey: secretAccessKey!,
